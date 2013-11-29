@@ -43,16 +43,16 @@ below the output for Dijkstra's Algorithm. The output should have the follow-
 ing format:
 
 
-Shortest Reliable Paths Algorithm
-Integer k : 5 Source : S
-NODE S : 0
-NODE 1 : 7
-NODE 2 : 1
-NODE 3 : 9
-NODE 4 : 5
-NODE 5 : 4
-NODE 6 : 2
-End Shortest Reliable Paths Algorithm
+	Shortest Reliable Paths Algorithm
+	Integer k : 5 Source : S
+	NODE S : 0
+	NODE 1 : 7
+	NODE 2 : 1
+	NODE 3 : 9
+	NODE 4 : 5
+	NODE 5 : 4
+	NODE 6 : 2
+	End Shortest Reliable Paths Algorithm
 
 
 The examples above a cooked up and the numbers don't reflect actual compu-

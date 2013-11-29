@@ -12,16 +12,16 @@ all other vertices in the graph. The output should be written to a file out.txt
 and should contain the following:
 
 
-Dijkstra
-Source : S
-NODE S : 0
-NODE 1 : 7
-NODE 2 : 1
-NODE 3 : 9
-NODE 4 : 5
-NODE 5 : 4
-NODE 6 : 2
-End Dijkstra
+	Dijkstra
+	Source : S
+	NODE S : 0
+	NODE 1 : 7
+	NODE 2 : 1
+	NODE 3 : 9
+	NODE 4 : 5
+	NODE 5 : 4
+	NODE 6 : 2
+	End Dijkstra
 
 
 Once the Dijkstra's Algorithm has been done we will use another algorithm The

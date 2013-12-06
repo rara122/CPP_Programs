@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <queue>
+#include <vector>
 
 using namespace std;
 
@@ -28,6 +30,7 @@ else{
     string GraphType;
     char Node1, Node2;
     int Weight;
+    priority_queue<int, std::vector<int>,  std::greater<int> >Queue;
     infile >> GraphType;
 
 //!!!!!!!!!!!!!!!!!!!!!!!!
@@ -36,10 +39,16 @@ else{
       //Directed Graph Implementation
     if(GraphType == "D"){
       while(infile >> Node1 >> Node2 >> Weight){
-        cout << "Node1: " << Node1 
+/*        cout << "Node1: " << Node1 
              << "\nNode2: " << Node2
              << "\nWeight: " << Weight
-             << "\n~~~~~~~~~~~~~~~~~\n\n";
+             << "\n~~~~~~~~~~~~~~~~~\n\n";*/
+        Queue.push(Weight);
+        }
+      while (!Queue.empty()){
+          cout << "\n~~~~~~~~~~~~~~~~~~\nQueue has: "
+               << Queue.top();
+          Queue.pop();
         }
 
 

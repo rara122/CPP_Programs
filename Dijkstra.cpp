@@ -25,26 +25,43 @@ else{
       //Ignore the first line.
     infile.ignore(256, '\n');
 
-    string GraphType; 
+    string GraphType;
+    char Node1, Node2;
+    int Weight;
     infile >> GraphType;
 
+//!!!!!!!!!!!!!!!!!!!!!!!!
+//IMPLEMENT THIS MEOWW~!!!
+//!!!!!!!!!!!!!!!!!!!!!!!!
       //Directed Graph Implementation
     if(GraphType == "D"){
-      cout << "\nDIRECTED GRAPH\n";
-
-//IMPLEMENT THIS MEOWW~!!!
-
-
-      }End if (Directed Graph Implementation)
-
-
+      while(infile >> Node1 >> Node2 >> Weight){
+        cout << "Node1: " << Node1 
+             << "\nNode2: " << Node2
+             << "\nWeight: " << Weight
+             << "\n~~~~~~~~~~~~~~~~~\n\n";
+        }
 
 
 
+
+
+
+
+      } //End if (Directed Graph Implementation)
+
+//!!!!!!!!!!!!!!!!!!!!!!!!
+//IMPLEMENT THIS LATORRRRR
+//!!!!!!!!!!!!!!!!!!!!!!!!
       //UnDirected Graph Implementation
     else if(GraphType == "UD"){
-//IMPLEMENT THIS LATORRR
-      }End if (UnDirected Graph Implementation)
+      while(infile >> Node1 >> Node2 >> Weight){
+        cout << "Node1: " << Node1 
+             << "\nNode2: " << Node2
+             << "\nWeight: " << Weight
+             << "\n~~~~~~~~~~~~~~~~~\n\n";
+        }
+      } //End if (UnDirected Graph Implementation)
 
     else //Bad GraphType
       cout << "\n!!!!!!!!! Error in File !!!!!!!!!\n"

@@ -6,6 +6,15 @@
 
 using namespace std;
 
+struct node{
+  char id;
+  int dist;
+  int visited;
+    //Overwrite < operator for PriorityQueue's Comparison
+  bool operator< (const node& temp) const 
+    { return visited > temp.visited; }
+};
+
 int main(int argc, char** argv){
 if(argc > 4 | argc < 2){
   cout << "\n!!!!!!!!!!!!!!!!!!! Input Error !!!!!!!!!!!!!!!!!!!\n"
@@ -28,9 +37,12 @@ else{
     infile.ignore(256, '\n');
 
     string GraphType;
-    char Node1, Node2;
-    int Weight;
+    char n1, n2;
+    int w;
     priority_queue<int, std::vector<int>,  std::greater<int> >Queue;
+    priority_queue<node>NodeQueue;
+    vector<char> Nodes1, Nodes2;
+    vector<int> Weights;
     infile >> GraphType;
 
 //!!!!!!!!!!!!!!!!!!!!!!!!
@@ -38,12 +50,24 @@ else{
 //!!!!!!!!!!!!!!!!!!!!!!!!
       //Directed Graph Implementation
     if(GraphType == "D"){
-      while(infile >> Node1 >> Node2 >> Weight){
+      while(infile >> n1 >> n2 >> w){
+          //Parallel Vectors (Node1, Node2, Weight)
+        Nodes1.push_back(n1);
+        Nodes2.push_back(n2);
+        Weights.push_back(w);
+
+
+	
+
 /*        cout << "Node1: " << Node1 
              << "\nNode2: " << Node2
              << "\nWeight: " << Weight
              << "\n~~~~~~~~~~~~~~~~~\n\n";*/
-        Queue.push(Weight);
+        Queue.push(w);
+//NodeQueue.push(//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
+//NodeQueue.push(//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
+//NodeQueue.push(//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
+//NodeQueue.push(//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
         }
       while (!Queue.empty()){
           cout << "\n~~~~~~~~~~~~~~~~~~\nQueue has: "
@@ -64,13 +88,13 @@ else{
 //!!!!!!!!!!!!!!!!!!!!!!!!
       //UnDirected Graph Implementation
     else if(GraphType == "UD"){
-      while(infile >> Node1 >> Node2 >> Weight){
+/*      while(infile >> Node1 >> Node2 >> Weight){
         cout << "Node1: " << Node1 
              << "\nNode2: " << Node2
              << "\nWeight: " << Weight
              << "\n~~~~~~~~~~~~~~~~~\n\n";
         }
-      } //End if (UnDirected Graph Implementation)
+*/      } //End if (UnDirected Graph Implementation)
 
     else //Bad GraphType
       cout << "\n!!!!!!!!! Error in File !!!!!!!!!\n"

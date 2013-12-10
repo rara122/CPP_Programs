@@ -3,17 +3,26 @@
 #include <string>
 #include <queue>
 #include <vector>
+#include <map>
 
 using namespace std;
 
-struct node{
-  char id;
+struct Edge{
+  char nodeTo;
   int dist;
   int visited;
     //Overwrite < operator for PriorityQueue's Comparison
-  bool operator< (const node& temp) const 
-    { return visited > temp.visited; }
+  bool operator< (const Edge& temp) const 
+    { return dist > temp.dist; }
 };
+
+
+
+void PrintNodeList(char node, map<char, priority_queue<Edge> > NodeList);
+void InsertEdge(char nF, char nT, int d, int v,
+                map<char, priority_queue<Edge> > &NodeList);
+
+
 
 int main(int argc, char** argv){
 if(argc > 4 | argc < 2){
@@ -37,46 +46,23 @@ else{
     infile.ignore(256, '\n');
 
     string GraphType;
-    char n1, n2;
-    int w;
-    priority_queue<int, std::vector<int>,  std::greater<int> >Queue;
-    priority_queue<node>NodeQueue;
-    vector<char> Nodes1, Nodes2;
-    vector<int> Weights;
+    char nodeFrom, nodeTo;
+    int Distance;
+    priority_queue<Edge>EdgeQueue;
+    map<char, priority_queue<Edge> > NodeList;
     infile >> GraphType;
 
-//!!!!!!!!!!!!!!!!!!!!!!!!
-//IMPLEMENT THIS MEOWW~!!!
-//!!!!!!!!!!!!!!!!!!!!!!!!
       //Directed Graph Implementation
     if(GraphType == "D"){
-      while(infile >> n1 >> n2 >> w){
-          //Parallel Vectors (Node1, Node2, Weight)
-        Nodes1.push_back(n1);
-        Nodes2.push_back(n2);
-        Weights.push_back(w);
-
-
-	
-
-/*        cout << "Node1: " << Node1 
-             << "\nNode2: " << Node2
-             << "\nWeight: " << Weight
-             << "\n~~~~~~~~~~~~~~~~~\n\n";*/
-        Queue.push(w);
-//NodeQueue.push(//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
-//NodeQueue.push(//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
-//NodeQueue.push(//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
-//NodeQueue.push(//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!)
-        }
-      while (!Queue.empty()){
-          cout << "\n~~~~~~~~~~~~~~~~~~\nQueue has: "
-               << Queue.top();
-          Queue.pop();
+      while(infile >> nodeFrom >> nodeTo >> Distance){
+        InsertEdge(nodeFrom, nodeTo, Distance, 0, NodeList );
         }
 
 
-
+  PrintNodeList ('A', NodeList);
+  PrintNodeList ('B', NodeList);
+  PrintNodeList ('C', NodeList);
+  PrintNodeList ('E', NodeList);
 
 
 
@@ -112,3 +98,26 @@ else{
     } //End else (File did not open)
   } //End else (Correct argc)
 } //End int main
+
+
+
+
+//HELPER FUNCTIONS
+
+void PrintNodeList(char node, map<char, priority_queue<Edge> > NodeList){
+  while (!NodeList[node].empty()){
+    cout << "\n~~~~~~~~~~~~~~~~~~\nNode " << node 
+         << " has: " << NodeList[node].top().nodeTo
+         << "\nDist: " << NodeList[node].top().dist << "\n";
+    NodeList[node].pop();
+    }
+}
+
+void InsertEdge(char nF, char nT, int d, int v,
+                map<char, priority_queue<Edge> > &NodeList){
+  Edge edge;
+  edge.nodeTo = nT;
+  edge.dist = d;
+  edge.visited = v;
+  NodeList[nF].push(edge);
+}

@@ -18,8 +18,7 @@ struct Edge{
 
 struct NodeInfo{
   char nodeName;
-  int dist;
-  int visited;
+  int dist, visited, steps, dist2;
     //Overwrite < operator for PriorityQueue's Comparison
   bool operator< (const NodeInfo& temp) const 
     { return dist > temp.dist; }
@@ -29,6 +28,7 @@ void PrintAdjList(char node, map<char, priority_queue<Edge> > AdjList);
 void InsertEdge(char nF, char nT, int w,
                 map<char, priority_queue<Edge> > &AdjList);
 void PrintDijkstra(map<char, NodeInfo> nL, char startNode);
+void PrintSRP(map<char, NodeInfo> nL, char startNode, int maxSteps);
 
 
 
@@ -38,13 +38,12 @@ void PrintDijkstra(map<char, NodeInfo> nL, char startNode);
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 
 int main(int argc, char** argv){
-if(argc > 4 | argc < 2){
+if(argc != 4){
   cout << "\n!!!!!!!!!!!!!!!!!!! Input Error !!!!!!!!!!!!!!!!!!!\n"
        << "::         Input should be as followed...        ::\n"
        << "::                                               ::\n"
-       << "::         \"run <filename> <startnode>\"          ::\n"
-       << "::                      or                       ::\n"
        << ":: \"run <filename> <startnode> <distancelimit>\"  ::\n"
+       << "::                                               ::\n"
        << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n";
   return -1;
   }
@@ -52,6 +51,7 @@ if(argc > 4 | argc < 2){
 else{
   char* File = argv[1];
   char startNode = *argv[2];
+  int maxSteps = *argv[3] - '0';
   ifstream infile;
   infile.open(File);
   if(infile.is_open()){
@@ -76,16 +76,31 @@ else{
         InsertEdge(nodeFrom, nodeTo, weight, AdjList);
         NodeInfoList[nodeFrom].nodeName = nodeFrom;
         NodeInfoList[nodeFrom].dist = 999999999;
+        NodeInfoList[nodeFrom].steps = -1;
+        NodeInfoList[nodeFrom].dist2 = 999999999;
         NodeInfoList[nodeFrom].visited = 0;
         NodeInfoList[nodeTo].nodeName = nodeTo;
         NodeInfoList[nodeTo].dist = 999999999;
+        NodeInfoList[nodeTo].steps = -1;
+        NodeInfoList[nodeTo].dist2 = 999999999;
         NodeInfoList[nodeTo].visited = 0;
+        }
+        //Check if startNode actually exists
+      if(NodeInfoList.find(startNode) == NodeInfoList.end()){
+        cout << "ERROR: Start node does not exist!\n";
+        cout << "\n!!!!!!!!!!!!!!!!!!! Input Error !!!!!!!!!!!!!!!!!!!\n"
+          << "::       Startnode was not found in input.       ::\n"
+          << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n";
+        return -1;
         }
 
       NodeQueue.push(NodeInfoList[startNode]);
-      NodeInfoList[startNode].dist = 0;      
+      NodeInfoList[startNode].dist = 0;
+      NodeInfoList[startNode].steps = 0;
+      NodeInfoList[startNode].dist2 = 0;        
       priority_queue<Edge> Adjacent;
       char node = startNode;
+      int currStep = 0;
       while(!NodeQueue.empty()){
         node = NodeQueue.top().nodeName;
         NodeQueue.pop();
@@ -95,9 +110,17 @@ else{
 
           //Set Distance of all non visited if new dist is smaller
         int temp;
+
           //get all edges in AdjList[node]
         Adjacent = AdjList[node];
         while(!Adjacent.empty()){
+
+            //if steps has not been updated yet, update
+          if(NodeInfoList[Adjacent.top().nodeTo].steps == -1 
+               && currStep < maxSteps){
+            NodeInfoList[Adjacent.top().nodeTo].steps = currStep + 1;
+            }
+
             //POP if visited
           if(NodeInfoList[Adjacent.top().nodeTo].visited == 1){
             Adjacent.pop();
@@ -109,13 +132,20 @@ else{
               //if Smaller Distance, Then update it.
             if(NodeInfoList[Adjacent.top().nodeTo].dist > temp){
               NodeInfoList[Adjacent.top().nodeTo].dist = temp;
+                //if within maxSteps boundary and Shorter distance
+              if(currStep < maxSteps 
+                   && temp < NodeInfoList[Adjacent.top().nodeTo].dist2){
+                NodeInfoList[Adjacent.top().nodeTo].dist2 = temp;
+                }
               }
             Adjacent.pop();
             }//Endelse
           } //Endwhile Adjacent not empty
+        currStep = currStep++;
         } //Endwhile NodeQueue not empty
 
       PrintDijkstra(NodeInfoList, startNode);
+      PrintSRP(NodeInfoList, startNode, maxSteps);
 
       } //End if (Directed Graph Implementation)
 
@@ -131,16 +161,32 @@ else{
         InsertEdge(nodeTo, nodeFrom, weight, AdjList);
         NodeInfoList[nodeFrom].nodeName = nodeFrom;
         NodeInfoList[nodeFrom].dist = 999999999;
+        NodeInfoList[nodeFrom].steps = -1;
+        NodeInfoList[nodeFrom].dist2 = 999999999;
         NodeInfoList[nodeFrom].visited = 0;
         NodeInfoList[nodeTo].nodeName = nodeTo;
         NodeInfoList[nodeTo].dist = 999999999;
+        NodeInfoList[nodeTo].steps = -1;
+        NodeInfoList[nodeTo].dist2 = 999999999;
         NodeInfoList[nodeTo].visited = 0;
+        }
+
+        //Check if startNode actually exists
+      if(NodeInfoList.find(startNode) == NodeInfoList.end()){
+        cout << "ERROR: Start node does not exist!\n";
+        cout << "\n!!!!!!!!!!!!!!!!!!! Input Error !!!!!!!!!!!!!!!!!!!\n"
+          << "::       Startnode was not found in input.       ::\n"
+          << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n";
+        return -1;
         }
 
       NodeQueue.push(NodeInfoList[startNode]);
       NodeInfoList[startNode].dist = 0;      
+      NodeInfoList[startNode].steps = 0;      
+      NodeInfoList[startNode].dist2 = 0;      
       priority_queue<Edge> Adjacent;
       char node = startNode;
+      int currStep = 0;
       while(!NodeQueue.empty()){
         node = NodeQueue.top().nodeName;
         NodeQueue.pop();
@@ -150,20 +196,35 @@ else{
 
           //Set Distance of all non visited if new dist is smaller
         int temp;
+
           //get all edges in AdjList[node]
         Adjacent = AdjList[node];
         while(!Adjacent.empty()){
+
+            //if steps has not been updated yet, update
+          if(NodeInfoList[Adjacent.top().nodeTo].steps == -1
+               && currStep < maxSteps){               
+            NodeInfoList[Adjacent.top().nodeTo].steps = currStep + 1;
+            }
+
             //POP if visited
           if(NodeInfoList[Adjacent.top().nodeTo].visited == 1){
             Adjacent.pop();
             }
           else{
             NodeQueue.push(NodeInfoList[Adjacent.top().nodeTo]);
-            temp = NodeInfoList[Adjacent.top().nodeFrom].dist 
+            temp = NodeInfoList[Adjacent.top().nodeFrom].dist
                    + Adjacent.top().weight;
+
               //if Smaller Distance, Then update it.
             if(NodeInfoList[Adjacent.top().nodeTo].dist > temp){
               NodeInfoList[Adjacent.top().nodeTo].dist = temp;
+
+                //if within maxSteps boundary and Shorter distance
+              if(currStep < maxSteps
+                   && temp < NodeInfoList[Adjacent.top().nodeTo].dist2){
+                NodeInfoList[Adjacent.top().nodeTo].dist2 = temp;
+                }
               }
             Adjacent.pop();
             }//Endelse
@@ -171,6 +232,7 @@ else{
         } //Endwhile NodeQueue not empty
 
       PrintDijkstra(NodeInfoList, startNode);
+      PrintSRP(NodeInfoList, startNode, maxSteps);
 
       } //End if (UnDirected Graph Implementation)
 
@@ -238,3 +300,19 @@ void PrintDijkstra(map<char, NodeInfo> nL, char startNode){
   cout <<"End Dijkstra\n\n";
 }
 
+void PrintSRP(map<char, NodeInfo> nL, char startNode, int maxSteps){
+  cout << "\nShortest Reliable Paths Algorithm\nSource: " << startNode
+       << "\n";
+  int dist;
+  typedef map<char, NodeInfo>::const_iterator MapIterator;
+  for (MapIterator iter = nL.begin(); iter != nL.end(); iter++){
+    if(iter->second.dist2 == 999999999){
+      cout << "NODE " << iter->first << ": Unreachable\n";
+      }
+    else{
+      cout << "NODE " << iter->first << ": " << iter->second.dist2 
+           << "\n";
+      }
+    }
+  cout <<"End Shortest Reliable Paths Algorithm\n\n";
+}

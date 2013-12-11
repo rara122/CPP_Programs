@@ -8,19 +8,27 @@
 using namespace std;
 
 struct Edge{
-  char nodeTo;
+  char nodeFrom, nodeTo;
+  int weight;
+    //Overwrite < operator for PriorityQueue's Comparison
+  bool operator< (const Edge& temp) const 
+    { return weight > temp.weight; }
+};
+
+struct NodeInfo{
+  char nodeName;
   int dist;
   int visited;
     //Overwrite < operator for PriorityQueue's Comparison
-  bool operator< (const Edge& temp) const 
+  bool operator< (const NodeInfo& temp) const 
     { return dist > temp.dist; }
 };
 
 
-
-void PrintNodeList(char node, map<char, priority_queue<Edge> > NodeList);
-void InsertEdge(char nF, char nT, int d, int v,
-                map<char, priority_queue<Edge> > &NodeList);
+void PrintAdjList(char node, map<char, priority_queue<Edge> > AdjList);
+void InsertEdge(char nF, char nT, int w,
+                map<char, priority_queue<Edge> > &AdjList);
+void PrintDijkstra(map<char, NodeInfo> nL, char startNode);
 
 
 
@@ -38,6 +46,7 @@ if(argc > 4 | argc < 2){
 
 else{
   char* File = argv[1];
+  char startNode = *argv[2];
   ifstream infile;
   infile.open(File);
   if(infile.is_open()){
@@ -47,40 +56,178 @@ else{
 
     string GraphType;
     char nodeFrom, nodeTo;
-    int Distance;
-    priority_queue<Edge>EdgeQueue;
-    map<char, priority_queue<Edge> > NodeList;
+    int weight;
+    Edge edge;
+    priority_queue<NodeInfo>NodeQueue;
+    map<char, priority_queue<Edge> > AdjList;
+    map<char, NodeInfo> NodeInfoList;
+
     infile >> GraphType;
 
-      //Directed Graph Implementation
+//=======================================================>
+//------------Directed Graph Implementation-------------->
+//=======================================================>
     if(GraphType == "D"){
-      while(infile >> nodeFrom >> nodeTo >> Distance){
-        InsertEdge(nodeFrom, nodeTo, Distance, 0, NodeList );
+      while(infile >> nodeFrom >> nodeTo >> weight){
+        InsertEdge(nodeFrom, nodeTo, weight, AdjList);
+        NodeInfoList[nodeFrom].nodeName = nodeFrom;
+        NodeInfoList[nodeFrom].dist = 999999999;
+        NodeInfoList[nodeFrom].visited = 0;
+        NodeInfoList[nodeTo].nodeName = nodeTo;
+        NodeInfoList[nodeTo].dist = 999999999;
+        NodeInfoList[nodeTo].visited = 0;
         }
 
+/*for(map<char, NodeInfo>::iterator iter = NodeInfoList.begin(); 
+    iter != NodeInfoList.end(); iter++){
+      cout << "\nNode[" << iter->first << "]\n"
+      << "NodeName = " << iter->second.nodeName
+      << "\nNodeDist = " << iter->second.dist
+      << "\nNodeVisit = " << iter->second.visited
+      << "\n\n";
+    }*/
 
-  PrintNodeList ('A', NodeList);
-  PrintNodeList ('B', NodeList);
-  PrintNodeList ('C', NodeList);
-  PrintNodeList ('E', NodeList);
+/*      typedef map<char, priority_queue<Edge> >::const_iterator 
+AdjListIterator;
+      for(AdjListIterator iter = AdjList.begin();
+          iter != AdjList.end(); iter++){
+         cout << " Iterfirst = " << iter->first << "\n";
+          NodeInfoList[iter->first].nodeName = iter->first;
+          NodeInfoList[iter->first].dist = 999999999;
+          NodeInfoList[iter->first].visited = 0;
+        }*/
 
+      NodeQueue.push(NodeInfoList[startNode]);
+      NodeInfoList[startNode].dist = 0;      
+      priority_queue<Edge> Adjacent;
+      char node = startNode;
+      while(!NodeQueue.empty()){
+        node = NodeQueue.top().nodeName;
+        NodeQueue.pop();
+        cout << "Outerloop Node::[" << node << "]::\n";
 
+          //Set Visited
+        NodeInfoList[node].visited = 1;
+        cout << "SET VISITED[" << node <<"]\n";
 
+          //Set Distance of all non visited if new dist is smaller
+        int temp;
+          //get all edges in AdjList[node]
+        Adjacent = AdjList[node];
+        while(!Adjacent.empty()){
+            //POP if visited
+          if(NodeInfoList[Adjacent.top().nodeTo].visited == 1){
+            cout << "Adj[" << Adjacent.top().nodeTo
+                 << "] Visted, Popping\n";
+            Adjacent.pop();
+            }
+          else{
+            NodeQueue.push(NodeInfoList[Adjacent.top().nodeTo]);
+            cout << "Else Visiting Node[" << Adjacent.top().nodeTo
+                 << "]...\n";
+            temp = NodeInfoList[Adjacent.top().nodeFrom].dist 
+                   + Adjacent.top().weight;
+              //if Smaller Distance, Then update it.
+            if(NodeInfoList[Adjacent.top().nodeTo].dist > temp){
+              NodeInfoList[Adjacent.top().nodeTo].dist = temp;
+              cout << "Update node[" << Adjacent.top().nodeTo
+                   << "] Dist => " << temp << "\n";
+              }
+            Adjacent.pop();
+            }//Endelse
+          } //Endwhile Adjacent not empty
+          cout <<"Bottom of NodeQueue Iteration\n\n\n";
+        } //Endwhile NodeQueue not empty
+
+      PrintDijkstra(NodeInfoList, startNode);
 
       } //End if (Directed Graph Implementation)
 
-//!!!!!!!!!!!!!!!!!!!!!!!!
-//IMPLEMENT THIS LATORRRRR
-//!!!!!!!!!!!!!!!!!!!!!!!!
-      //UnDirected Graph Implementation
+
+
+
+//=======================================================>
+//-------------UnDirected Graph Implementation----------->
+//=======================================================>
     else if(GraphType == "UD"){
-/*      while(infile >> Node1 >> Node2 >> Weight){
-        cout << "Node1: " << Node1 
-             << "\nNode2: " << Node2
-             << "\nWeight: " << Weight
-             << "\n~~~~~~~~~~~~~~~~~\n\n";
+      while(infile >> nodeFrom >> nodeTo >> weight){
+        InsertEdge(nodeFrom, nodeTo, weight, AdjList);
+        NodeInfoList[nodeFrom].nodeName = nodeFrom;
+        NodeInfoList[nodeFrom].dist = 999999999;
+        NodeInfoList[nodeFrom].visited = 0;
+        NodeInfoList[nodeTo].nodeName = nodeTo;
+        NodeInfoList[nodeTo].dist = 999999999;
+        NodeInfoList[nodeTo].visited = 0;
         }
-*/      } //End if (UnDirected Graph Implementation)
+
+/*for(map<char, NodeInfo>::iterator iter = NodeInfoList.begin(); 
+    iter != NodeInfoList.end(); iter++){
+      cout << "\nNode[" << iter->first << "]\n"
+      << "NodeName = " << iter->second.nodeName
+      << "\nNodeDist = " << iter->second.dist
+      << "\nNodeVisit = " << iter->second.visited
+      << "\n\n";
+    }*/
+
+/*      typedef map<char, priority_queue<Edge> >::const_iterator 
+AdjListIterator;
+      for(AdjListIterator iter = AdjList.begin();
+          iter != AdjList.end(); iter++){
+         cout << " Iterfirst = " << iter->first << "\n";
+          NodeInfoList[iter->first].nodeName = iter->first;
+          NodeInfoList[iter->first].dist = 999999999;
+          NodeInfoList[iter->first].visited = 0;
+        }*/
+
+      NodeQueue.push(NodeInfoList[startNode]);
+      NodeInfoList[startNode].dist = 0;      
+      priority_queue<Edge> Adjacent;
+      char node = startNode;
+      while(!NodeQueue.empty()){
+        node = NodeQueue.top().nodeName;
+        NodeQueue.pop();
+        cout << "Outerloop Node::[" << node << "]::\n";
+
+          //Set Visited
+        NodeInfoList[node].visited = 1;
+        cout << "SET VISITED[" << node <<"]\n";
+
+          //Set Distance of all non visited if new dist is smaller
+        int temp;
+          //get all edges in AdjList[node]
+        Adjacent = AdjList[node];
+        while(!Adjacent.empty()){
+            //POP if visited
+          if(NodeInfoList[Adjacent.top().nodeTo].visited == 1){
+            cout << "Adj[" << Adjacent.top().nodeTo
+                 << "] Visted, Popping\n";
+            Adjacent.pop();
+            }
+          else{
+            NodeQueue.push(NodeInfoList[Adjacent.top().nodeTo]);
+            cout << "Else Visiting Node[" << Adjacent.top().nodeTo
+                 << "]...\n";
+            temp = NodeInfoList[Adjacent.top().nodeFrom].dist 
+                   + Adjacent.top().weight;
+              //if Smaller Distance, Then update it.
+            if(NodeInfoList[Adjacent.top().nodeTo].dist > temp){
+              NodeInfoList[Adjacent.top().nodeTo].dist = temp;
+              cout << "Update node[" << Adjacent.top().nodeTo
+                   << "] Dist => " << temp << "\n";
+              }
+            Adjacent.pop();
+            }//Endelse
+          } //Endwhile Adjacent not empty
+          cout <<"Bottom of NodeQueue Iteration\n\n\n";
+        } //Endwhile NodeQueue not empty
+
+      PrintDijkstra(NodeInfoList, startNode);
+
+
+
+//  PrintAdjList ('A', AdjList);
+
+      } //End if (UnDirected Graph Implementation)
 
     else //Bad GraphType
       cout << "\n!!!!!!!!! Error in File !!!!!!!!!\n"
@@ -104,20 +251,32 @@ else{
 
 //HELPER FUNCTIONS
 
-void PrintNodeList(char node, map<char, priority_queue<Edge> > NodeList){
-  while (!NodeList[node].empty()){
+void PrintAdjList(char node, map<char, priority_queue<Edge> > AdjList){
+  while (!AdjList[node].empty()){
     cout << "\n~~~~~~~~~~~~~~~~~~\nNode " << node 
-         << " has: " << NodeList[node].top().nodeTo
-         << "\nDist: " << NodeList[node].top().dist << "\n";
-    NodeList[node].pop();
+         << " has: " << AdjList[node].top().nodeTo
+         << "\nEdge Weight: " << AdjList[node].top().weight << "\n";
+    AdjList[node].pop();
     }
 }
 
-void InsertEdge(char nF, char nT, int d, int v,
-                map<char, priority_queue<Edge> > &NodeList){
+void InsertEdge(char nF, char nT, int w,
+                map<char, priority_queue<Edge> > &AdjList){
   Edge edge;
+  edge.nodeFrom = nF;
   edge.nodeTo = nT;
-  edge.dist = d;
-  edge.visited = v;
-  NodeList[nF].push(edge);
+  edge.weight = w;
+  AdjList[nF].push(edge);
 }
+
+void PrintDijkstra(map<char, NodeInfo> nL, char startNode){
+  cout << "\nDijkstra\nSource: " << startNode
+       << "\n";
+  typedef map<char, NodeInfo>::const_iterator MapIterator;
+  for (MapIterator iter = nL.begin(); iter != nL.end(); iter++){
+    cout << "NODE " << iter->first << ": " << iter->second.dist 
+         << "\n";
+    }
+  cout <<"End Dijkstra\n\n";
+}
+

@@ -122,6 +122,7 @@ else{
       priority_queue<Edge> Adjacent;
       char node = startNode;
       int currStep = 0;
+      int temp;
       while(!NodeQueue.empty()){
         node = NodeQueue.top().nodeName;
         NodeQueue.pop();
@@ -129,18 +130,54 @@ else{
           //Set Visited
         NodeInfoList[node].visited = 1;
 
-          //Set Distance of all non visited if new dist is smaller
-        int temp;
-
           //get all edges in AdjList[node]
         Adjacent = AdjList[node];
         while(!Adjacent.empty()){
 
-            //if steps has not been updated yet, update
+
+//-------------------------------------------------------------------->
+//-------------- SHORTEST RELIABLE DIST, LOGIC CHECKING -------------->
+//-------------------------------------------------------------------->
+            //if steps has not been updated yet and nodeTo !- visited 
+            //AND if prev node has been visited
+          if(NodeInfoList[Adjacent.top().nodeFrom].steps < maxSteps 
+             && NodeInfoList[Adjacent.top().nodeTo].steps == -1
+             && NodeInfoList[Adjacent.top().nodeFrom].steps != -1){
+
+              //if nodeFrom not -1 steps AND smaller than nodeTo
+            if(NodeInfoList[Adjacent.top().nodeFrom].steps != -1
+               && NodeInfoList[Adjacent.top().nodeFrom].steps 
+                  < NodeInfoList[Adjacent.top().nodeTo].steps){
+              NodeInfoList[Adjacent.top().nodeTo].steps = 
+                NodeInfoList[Adjacent.top().nodeFrom].steps + 1;
+
+                //Update dist2 to non shortest, but reliable path
+              temp  =  NodeInfoList[Adjacent.top().nodeFrom].dist
+                + Adjacent.top().weight;
+
+                //if dist2 has not already been found
+              if(temp < NodeInfoList[Adjacent.top().nodeTo].dist2){
+                NodeInfoList[Adjacent.top().nodeTo].dist2 = temp;
+                }                 
+
+              } //Endif nodeFrom not -1 steps...
+
+            if(NodeInfoList[Adjacent.top().nodeTo].steps == -1){
+              NodeInfoList[Adjacent.top().nodeTo].dist2 = 
+                NodeInfoList[Adjacent.top().nodeFrom].dist
+                + Adjacent.top().weight;
+              }
+            }
+
           if(NodeInfoList[Adjacent.top().nodeTo].steps == -1 
                && currStep < maxSteps){
             NodeInfoList[Adjacent.top().nodeTo].steps = currStep + 1;
             }
+
+//-------------------------------------------------------------------->
+//------- END OF MAJOR SHORTEST RELIABLE DIST, LOGIC CHECKING -------->
+//-------------------------------------------------------------------->
+
 
             //POP if visited
           if(NodeInfoList[Adjacent.top().nodeTo].visited == 1){
@@ -150,9 +187,11 @@ else{
             NodeQueue.push(NodeInfoList[Adjacent.top().nodeTo]);
             temp = NodeInfoList[Adjacent.top().nodeFrom].dist 
                    + Adjacent.top().weight;
+
               //if Smaller Distance, Then update it.
             if(NodeInfoList[Adjacent.top().nodeTo].dist > temp){
               NodeInfoList[Adjacent.top().nodeTo].dist = temp;
+
                 //if within maxSteps boundary and Shorter distance
               if(currStep < maxSteps 
                    && temp < NodeInfoList[Adjacent.top().nodeTo].dist2){
@@ -162,6 +201,7 @@ else{
             Adjacent.pop();
             }//Endelse
           } //Endwhile Adjacent not empty
+
         currStep = currStep++;
         } //Endwhile NodeQueue not empty
 

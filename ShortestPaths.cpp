@@ -270,14 +270,19 @@ void PrintDijkstra(map<char, NodeInfo> nL, char startNode){
 }
 
 void PrintSRP(map<char, NodeInfo> nL, char startNode, int maxSteps){
+<<<<<<< HEAD:ShortestPaths.cpp
   ofstream fout;
   fout.open("output.txt", ios::app);
   fout << "\nShortest Reliable Paths Algorithm\nSource: " << startNode
+=======
+  cout << "\nShortest Reliable Paths Algorithm\nSource: " << startNode
+>>>>>>> 9ad7c786e98c18ad6c12a94e802f6608f73c1ede:Dijkstra.cpp
        << "\n";
   int dist;
   typedef map<char, NodeInfo>::const_iterator MapIterator;
   for (MapIterator iter = nL.begin(); iter != nL.end(); iter++){
     if(iter->second.dist2 == 999999999){
+<<<<<<< HEAD:ShortestPaths.cpp
       fout << "NODE " << iter->first << ": Unreachable\n";
       }
     else{
@@ -287,4 +292,14 @@ void PrintSRP(map<char, NodeInfo> nL, char startNode, int maxSteps){
     }
   fout <<"End Shortest Reliable Paths Algorithm\n\n";
   fout.close();
+=======
+      cout << "NODE " << iter->first << ": Unreachable\n";
+      }
+    else{
+      cout << "NODE " << iter->first << ": " << iter->second.dist2 
+           << "\n";
+      }
+    }
+  cout <<"End Shortest Reliable Paths Algorithm\n\n";
+>>>>>>> 9ad7c786e98c18ad6c12a94e802f6608f73c1ede:Dijkstra.cpp
 }

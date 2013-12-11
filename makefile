@@ -1,4 +1,4 @@
-all:	Dijkstra.cpp
-	g++ Dijkstra.cpp -o run
+all:	ShortestPaths.cpp
+	g++ ShortestPaths.cpp -o run
 clean:	
-	rm -f *.o run
+	rm -f *.o output.txt run

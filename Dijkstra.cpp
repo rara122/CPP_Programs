@@ -68,9 +68,7 @@ else{
 
     infile >> GraphType;
 
-//=======================================================>
-//------------Directed Graph Implementation-------------->
-//=======================================================>
+//<------------Directed Graph Loading-------------->
     if(GraphType == "D"){
       while(infile >> nodeFrom >> nodeTo >> weight){
         InsertEdge(nodeFrom, nodeTo, weight, AdjList);
@@ -85,6 +83,29 @@ else{
         NodeInfoList[nodeTo].dist2 = 999999999;
         NodeInfoList[nodeTo].visited = 0;
         }
+      } //End Directed
+
+//<-------------UnDirected Graph Loading----------->
+    if(GraphType == "UD"){
+      while(infile >> nodeFrom >> nodeTo >> weight){
+        InsertEdge(nodeFrom, nodeTo, weight, AdjList);
+        InsertEdge(nodeTo, nodeFrom, weight, AdjList);
+        NodeInfoList[nodeFrom].nodeName = nodeFrom;
+        NodeInfoList[nodeFrom].dist = 999999999;
+        NodeInfoList[nodeFrom].steps = -1;
+        NodeInfoList[nodeFrom].dist2 = 999999999;
+        NodeInfoList[nodeFrom].visited = 0;
+        NodeInfoList[nodeTo].nodeName = nodeTo;
+        NodeInfoList[nodeTo].dist = 999999999;
+        NodeInfoList[nodeTo].steps = -1;
+        NodeInfoList[nodeTo].dist2 = 999999999;
+        NodeInfoList[nodeTo].visited = 0;
+        }
+      } //End Undirected
+
+//================================================>
+//---------------  IMPLEMENTATION ---------------->
+//================================================>
         //Check if startNode actually exists
       if(NodeInfoList.find(startNode) == NodeInfoList.end()){
         cout << "ERROR: Start node does not exist!\n";
@@ -147,101 +168,6 @@ else{
       PrintDijkstra(NodeInfoList, startNode);
       PrintSRP(NodeInfoList, startNode, maxSteps);
 
-      } //End if (Directed Graph Implementation)
-
-
-
-
-//=======================================================>
-//-------------UnDirected Graph Implementation----------->
-//=======================================================>
-    else if(GraphType == "UD"){
-      while(infile >> nodeFrom >> nodeTo >> weight){
-        InsertEdge(nodeFrom, nodeTo, weight, AdjList);
-        InsertEdge(nodeTo, nodeFrom, weight, AdjList);
-        NodeInfoList[nodeFrom].nodeName = nodeFrom;
-        NodeInfoList[nodeFrom].dist = 999999999;
-        NodeInfoList[nodeFrom].steps = -1;
-        NodeInfoList[nodeFrom].dist2 = 999999999;
-        NodeInfoList[nodeFrom].visited = 0;
-        NodeInfoList[nodeTo].nodeName = nodeTo;
-        NodeInfoList[nodeTo].dist = 999999999;
-        NodeInfoList[nodeTo].steps = -1;
-        NodeInfoList[nodeTo].dist2 = 999999999;
-        NodeInfoList[nodeTo].visited = 0;
-        }
-
-        //Check if startNode actually exists
-      if(NodeInfoList.find(startNode) == NodeInfoList.end()){
-        cout << "ERROR: Start node does not exist!\n";
-        cout << "\n!!!!!!!!!!!!!!!!!!! Input Error !!!!!!!!!!!!!!!!!!!\n"
-          << "::       Startnode was not found in input.       ::\n"
-          << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n";
-        return -1;
-        }
-
-      NodeQueue.push(NodeInfoList[startNode]);
-      NodeInfoList[startNode].dist = 0;      
-      NodeInfoList[startNode].steps = 0;      
-      NodeInfoList[startNode].dist2 = 0;      
-      priority_queue<Edge> Adjacent;
-      char node = startNode;
-      int currStep = 0;
-      while(!NodeQueue.empty()){
-        node = NodeQueue.top().nodeName;
-        NodeQueue.pop();
-
-          //Set Visited
-        NodeInfoList[node].visited = 1;
-
-          //Set Distance of all non visited if new dist is smaller
-        int temp;
-
-          //get all edges in AdjList[node]
-        Adjacent = AdjList[node];
-        while(!Adjacent.empty()){
-
-            //if steps has not been updated yet, update
-          if(NodeInfoList[Adjacent.top().nodeTo].steps == -1
-               && currStep < maxSteps){               
-            NodeInfoList[Adjacent.top().nodeTo].steps = currStep + 1;
-            }
-
-            //POP if visited
-          if(NodeInfoList[Adjacent.top().nodeTo].visited == 1){
-            Adjacent.pop();
-            }
-          else{
-            NodeQueue.push(NodeInfoList[Adjacent.top().nodeTo]);
-            temp = NodeInfoList[Adjacent.top().nodeFrom].dist
-                   + Adjacent.top().weight;
-
-              //if Smaller Distance, Then update it.
-            if(NodeInfoList[Adjacent.top().nodeTo].dist > temp){
-              NodeInfoList[Adjacent.top().nodeTo].dist = temp;
-
-                //if within maxSteps boundary and Shorter distance
-              if(currStep < maxSteps
-                   && temp < NodeInfoList[Adjacent.top().nodeTo].dist2){
-                NodeInfoList[Adjacent.top().nodeTo].dist2 = temp;
-                }
-              }
-            Adjacent.pop();
-            }//Endelse
-          } //Endwhile Adjacent not empty
-        } //Endwhile NodeQueue not empty
-
-      PrintDijkstra(NodeInfoList, startNode);
-      PrintSRP(NodeInfoList, startNode, maxSteps);
-
-      } //End if (UnDirected Graph Implementation)
-
-    else //Bad GraphType
-      cout << "\n!!!!!!!!! Error in File !!!!!!!!!\n"
-           << ":: GraphType must be either... ::\n"
-           << "::        D for Directed       ::\n"
-           << "::      UD for UnDirected      ::"
-           << "\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n";
 
     } //End if (File open)
   else{

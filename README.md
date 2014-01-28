@@ -61,12 +61,13 @@ the ones for the Shortest Reliable Paths Algorithm.
 
 
 
-Input is in the format of
-#First Line of Comments
-<D for Directed Graph or UD for Undirected Graph>
-<Start Node> <End Node> <Weight>
-...
-<Start Node> <End Node> <Weight>
+<h3>Input is in the format of:<h3/>
+
+\<First Line of Comments > <br/>
+\<D for Directed Graph or UD for Undirected Graph > <br/>
+\<Start Node > \<End Node > \<Weight > <br/>
+... <br/>
+\<Start Node > \<End Node > \<Weight > <br/>
 
 
 	#Input graph File name is input.txt - Single line comment

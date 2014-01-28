@@ -58,3 +58,25 @@ ing format:
 The examples above a cooked up and the numbers don't reflect actual compu-
 tation results. In general the shortest paths for Dijkstra will be smaller than
 the ones for the Shortest Reliable Paths Algorithm.
+
+
+
+Input is in the format of
+#First Line of Comments
+<D for Directed Graph or UD for Undirected Graph>
+<Start Node> <End Node> <Weight>
+...
+<Start Node> <End Node> <Weight>
+
+
+	#Input graph File name is input.txt - Single line comment
+	D
+	A B 4
+	A C 2
+	B C 3
+	C B 1
+	B D 2
+	B E 3
+	C E 5
+	C D 4
+	E D 1

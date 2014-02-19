@@ -1,8 +1,8 @@
 CPP_Programs
 ============
 
-<h2>ShortestPath (Dijsktra's Algorithm)</h2>
+<h3>ShortestPath (Dijsktra's Algorithm)</h3>
 Algorithms Project for Calculating Shortest Path (Dijkstra)! 
 
-<h2>Array Hopper(Array Traversal)</h2>
+<h3>Array Hopper(Array Traversal)</h3>
 Algorithm for traversing the array dependant on value of index!
